@@ -60,9 +60,9 @@
                                         <form action="./wait" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="no" value="{{ todo.no }}">
-                                            <button class="btn btn-success">
-                                                <i class="bi bi-arrow-down-square"></i>
-                                            </button>
+                                            <button class="btn btn-success">대기</button>
+                                                <!-- <i class="bi bi-arrow-down-square"></i>
+                                            </button> -->
                                         </form>
                                         <form action="./delete" method="post">
                                             {% csrf_token %}
@@ -100,9 +100,9 @@
                                     <form action="./ing" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="no" value="{{ todo.no }}">
-                                        <button type="submit" class="btn btn-outline-primary">
-                                            <i class="bi bi-arrow-up-square"></i>
-                                        </button>
+                                        <button type="submit" class="btn btn-outline-primary">진행</button>
+                                            <!-- <i class="bi bi-arrow-up-square"></i>
+                                        </button> -->
                                     </form>
                                 </td>
                                 <td class="text-start">
