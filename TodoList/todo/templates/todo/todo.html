@@ -26,8 +26,17 @@
                             placeholder="할 일을 입력해주세요."
                             autofocus
                         >
-                        <button type="submit" class="btn btn-outline-primary">등록</button>
                     </div>
+                    <div class="input-group mb-3">
+                        <label for="content" class="input-group-text">세부 내용</label>
+                        <input type="text" name="content" class="form-control" id="content"
+                            placeholder="세부 내용을 입력해주세요. (선택)"
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary">등록</button>
+                    {% if error %}
+                        <div class="alert alert-danger mt-2">{{ error }}</div>
+                    {% endif %}
                 </form>
                 <hr>
                 <h3>진행 목록</h3>
@@ -39,6 +48,7 @@
                             <th>⭐</th>
                         </tr>
                     </thead>
+                    {% with edit_no=request.GET.edit_no %}
                     <tbody>
                         {% for todo in ing_list %}
                             <tr {% if todo.status == 'DONE' %}class="table-success"{% endif %}>
@@ -49,11 +59,26 @@
                                         <input type="checkbox" class="form-check-input"
                                             onchange="this.form.submit()"
                                             {% if todo.status == 'DONE' %}checked{% endif %}>
-
                                     </form>
                                 </td>
                                 <td class="text-start">
-                                    {{ todo.title }}
+                                    {% if edit_no|add:'0' == todo.no %}
+                                        <form action="./update" method="post" class="d-flex flex-column gap-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="no" value="{{ todo.no }}">
+                                            <input type="text" name="title" class="form-control" value="{{ todo.title }}" required placeholder="제목은 필수입니다">
+                                            <input type="text" name="content" class="form-control" value="{{ todo.content }}" placeholder="세부 내용 (선택)">
+                                            <div class="mt-2 d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">저장</button>
+                                                <a href="{% url 'todo' %}" class="btn btn-secondary btn-sm">취소</a>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        <div><strong>{{ todo.title }}</strong></div>
+                                        {% if todo.content %}
+                                            <div class="text-muted small">{{ todo.content }}</div>
+                                        {% endif %}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-center gap-2">
@@ -61,9 +86,15 @@
                                             {% csrf_token %}
                                             <input type="hidden" name="no" value="{{ todo.no }}">
                                             <button class="btn btn-success">대기</button>
-                                                <!-- <i class="bi bi-arrow-down-square"></i>
-                                            </button> -->
                                         </form>
+                                        {% if not edit_no or edit_no|add:'0' != todo.no %}
+                                        <form action="" method="get">
+                                            <input type="hidden" name="edit_no" value="{{ todo.no }}">
+                                            <button class="btn btn-warning" type="submit">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
                                         <form action="./delete" method="post">
                                             {% csrf_token %}
                                             <input type="hidden" name="no" value="{{ todo.no }}">
@@ -82,6 +113,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
+                    {% endwith %}
                 </table>
                 <hr>
                 <h3>대기 목록</h3>
@@ -101,21 +133,45 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="no" value="{{ todo.no }}">
                                         <button type="submit" class="btn btn-outline-primary">진행</button>
-                                            <!-- <i class="bi bi-arrow-up-square"></i>
-                                        </button> -->
                                     </form>
                                 </td>
                                 <td class="text-start">
-                                    {{ todo.title }}
+                                    {% if edit_no|add:'0' == todo.no %}
+                                        <form action="./update" method="post" class="d-flex flex-column gap-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="no" value="{{ todo.no }}">
+                                            <input type="text" name="title" class="form-control" value="{{ todo.title }}" required placeholder="제목은 필수입니다">
+                                            <input type="text" name="content" class="form-control" value="{{ todo.content }}" placeholder="세부 내용 (선택)">
+                                            <div class="mt-2 d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">저장</button>
+                                                <a href="{% url 'todo' %}" class="btn btn-secondary btn-sm">취소</a>
+                                            </div>
+                                        </form>
+                                    {% else %}
+                                        <div><strong>{{ todo.title }}</strong></div>
+                                        {% if todo.content %}
+                                            <div class="text-muted small">{{ todo.content }}</div>
+                                        {% endif %}
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    <form action="./delete" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="no" value="{{ todo.no }}">
-                                        <button class="btn btn-danger">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </form>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        {% if not edit_no or edit_no|add:'0' != todo.no %}
+                                        <form action="" method="get">
+                                            <input type="hidden" name="edit_no" value="{{ todo.no }}">
+                                            <button class="btn btn-warning" type="submit">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                        <form action="./delete" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="no" value="{{ todo.no }}">
+                                            <button class="btn btn-danger">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% empty %}

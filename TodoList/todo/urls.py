@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('todo', views.todo, name='todo'),
     path('create', views.create, name='create'),
+    path('update', views.update, name='update'),
     path('delete', views.delete, name='delete'),
     path('ing', views.ing, name='ing'),
     path('done', views.done, name='done'),
