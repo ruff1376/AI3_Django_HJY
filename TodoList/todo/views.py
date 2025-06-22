@@ -42,7 +42,7 @@ def create(request):
 
 def update(request):
     print('수정 요청...')
-    no = request.POST.get('no')
+    no = request.POST['no']
     print('no : {}'.format(no))
     title = request.POST.get('title', '').strip()
     content_val = request.POST.get('content', '').strip()
