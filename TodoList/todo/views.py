@@ -27,7 +27,7 @@ def todo(request):
 
 def create(request):
     print('할 일 등록...')
-    # POST 방식의 파라미터
+    # POST 방식의 파라미터(KeyError 방지)
     title = request.POST.get('title', '').strip()
     content_val = request.POST.get('content', '').strip()
     # 유효성 검사(제목 미입력)
@@ -44,10 +44,12 @@ def update(request):
     print('수정 요청...')
     no = request.POST['no']
     print('no : {}'.format(no))
+    # POST 방식의 파라미터(KeyError 방지)
     title = request.POST.get('title', '').strip()
     content_val = request.POST.get('content', '').strip()
     # 유효성 검사(제목 미입력)
     if not title:
+        # 에러 메시지와 함께 리다이렉트
         return HttpResponseRedirect(reverse('todo') + f'?error=제목을 입력해주세요.&edit_no={no}')
     try:
         todo = Todo.objects.get(no=no)

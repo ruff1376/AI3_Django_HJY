@@ -34,13 +34,14 @@
                             placeholder="세부 내용을 입력해주세요. (선택)">
                     </div>
                     <button type="submit" class="btn btn-outline-primary">등록</button>
+                    <!-- 제목 미입력 유효성 검사 -->
                     {% if error %}
                     <div class="alert alert-danger mt-2">{{ error }}</div>
                     {% endif %}
                 </form>
                 <hr>
                 <h3>진행 목록</h3>
-                {% with edit_no=request.GET.edit_no %}
+                {% with edit_no=request.GET.edit_no %}      <!-- edit_no : 수정할 todo 번호 -->
                 <table class="table table-bordered text-center align-middle">
                     <thead>
                         <tr class="table-dark">
@@ -61,6 +62,7 @@
                                 </form>
                             </td>
                             <td class="text-start">
+                                <!-- 수정 폼(title 필수) -->
                                 {% if edit_no|add:'0' == todo.no %}
                                 <form action="./update" method="post" class="d-flex flex-column gap-2">
                                     {% csrf_token %}
@@ -83,11 +85,13 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    <!-- 대기 버튼 : 클릭 시 진행 목록 ➡ 대기 목록으로 이동 -->
                                     <form action="./wait" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="no" value="{{ todo.no }}">
                                         <button class="btn btn-success">대기</button>
                                     </form>
+                                    <!-- 수정 버튼 : 클릭 시 수정 폼으로 Todo 수정 가능, 수정 중 상태에선 사라짐 -->
                                     {% if not edit_no or edit_no|add:'0' != todo.no %}
                                     <form action="" method="get">
                                         <input type="hidden" name="edit_no" value="{{ todo.no }}">
@@ -96,6 +100,7 @@
                                         </button>
                                     </form>
                                     {% endif %}
+                                    <!-- 삭제 버튼 : 클릭 시 Todo list에서 해당 할 일 삭제 -->
                                     <form action="./delete" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="no" value="{{ todo.no }}">
@@ -136,6 +141,7 @@
                                 </form>
                             </td>
                             <td class="text-start">
+                                <!-- 수정 폼(title 필수) -->
                                 {% if edit_no|add:'0' == todo.no %}
                                 <form action="./update" method="post" class="d-flex flex-column gap-2">
                                     {% csrf_token %}
@@ -158,6 +164,7 @@
                             </td>
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
+                                    <!-- 수정 버튼 : 클릭 시 수정 폼으로 Todo 수정 가능, 수정 중 상태에선 사라짐 -->
                                     {% if not edit_no or edit_no|add:'0' != todo.no %}
                                     <form action="" method="get">
                                         <input type="hidden" name="edit_no" value="{{ todo.no }}">
@@ -166,6 +173,7 @@
                                         </button>
                                     </form>
                                     {% endif %}
+                                    <!-- 삭제 버튼 : 클릭 시 Todo list에서 해당 할 일 삭제 -->
                                     <form action="./delete" method="post">
                                         {% csrf_token %}
                                         <input type="hidden" name="no" value="{{ todo.no }}">
@@ -195,17 +203,15 @@
         crossorigin="anonymous"></script>
 
     <script>
-        // edit_no가 있을 때 해당 input에 포커스
+        // 수정 버튼 클릭 시 해당 위치로 스크롤 이동 및 커서 위치
         window.addEventListener('DOMContentLoaded', function () {
             const params = new URLSearchParams(window.location.search);
             const editNo = params.get('edit_no');
             if (editNo) {
-                // 진행/대기 목록 모두에서 id가 고유하도록 id 속성 부여 필요
                 const input = document.getElementById('edit-title-' + editNo);
                 if (input) {
                     input.focus();
                     input.select();
-                    // 스크롤 이동 방지
                     input.scrollIntoView({ behavior: 'auto', block: 'center' });
                 }
             }
